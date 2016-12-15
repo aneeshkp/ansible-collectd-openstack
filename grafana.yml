@@ -1,0 +1,10 @@
+---
+#
+# Playbook to install grafana
+#
+
+- hosts: grafana
+  remote_user: root
+  roles:
+    - { role: epel    }
+    - { role: grafana }

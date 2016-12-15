@@ -1,0 +1,174 @@
+# Installed by Browbeat Ansible Installer
+# Config type: {{config_type}}
+
+# Interval default is 10s
+Interval {{collectd_interval}}
+
+# Hostname for this machine, if not defined, use gethostname(2) system call
+Hostname "{{inventory_hostname}}"
+
+# Loaded Plugins:
+LoadPlugin "logfile"
+<Plugin "logfile">
+  LogLevel "info"
+  File "/var/log/collectd.log"
+  Timestamp true
+</Plugin>
+
+LoadPlugin write_graphite
+LoadPlugin cpu
+LoadPlugin conntrack
+LoadPlugin df
+LoadPlugin disk
+LoadPlugin exec
+LoadPlugin interface
+LoadPlugin irq
+LoadPlugin load
+LoadPlugin match_regex
+LoadPlugin memory
+LoadPlugin numa
+LoadPlugin processes
+LoadPlugin swap
+LoadPlugin tail
+LoadPlugin turbostat
+LoadPlugin unixsock
+LoadPlugin uptime
+
+# Open unix domain socket for collectdctl
+<Plugin unixsock>
+  SocketFile "/var/run/collectd-unixsock"
+  SocketGroup "collectd"
+  SocketPerms "0770"
+  DeleteSocket true
+</Plugin>
+
+PreCacheChain "PreCache"
+<Chain "PreCache">
+  <Rule "ignore_tap">
+    <Match "regex">
+      Plugin "^interface$"
+      PluginInstance "^tap*"
+    </Match>
+    Target "stop"
+  </Rule>
+  <Rule "ignore_interfaces_q">
+    <Match "regex">
+      Plugin "^interface$"
+      PluginInstance "^q.*"
+    </Match>
+    Target "stop"
+  </Rule>
+  Target "return"
+</Chain>
+
+# Graphite Host Configuration
+<Plugin write_graphite>
+  <Carbon>
+    Host "{{graphite_host}}"
+    Port "2003"
+    Prefix "{{graphite_prefix}}."
+    Protocol "tcp"
+    LogSendErrors true
+    StoreRates true
+    AlwaysAppendDS false
+    EscapeCharacter "_"
+  </Carbon>
+</Plugin>
+
+<Plugin df>
+  ValuesPercentage true
+</Plugin>
+
+<Plugin disk>
+  Disk "/^[hsv]d[a-z]+[0-9]?$/"
+  IgnoreSelected false
+</Plugin>
+
+# (akrzos) Including the version of OpenStack that the process was verified as running after
+# OpenStack Installation with a comment at the end of each Process/ProcessMatch statement.
+# A Minus before the version means the process was not found in that version. (Ex -9)
+<Plugin processes>
+  # Ceilometer (OpenStack Installed)
+  ProcessMatch "ceilometer-agent-compute" "python.+ceilometer-agent-compute"            # -9,-10
+  ProcessMatch "ceilometer-polling" "ceilometer-polling"                                # 9,10
+
+  # Collectd (Browbeat Installed)
+  ProcessMatch "collectd" "/usr/sbin/collectd"
+
+  # Neutron (OpenStack Installed)
+  ProcessMatch "neutron-openvswitch-agent" "python.+neutron-openvswitch-agent"          # 9,10
+  ProcessMatch "neutron-l3-agent" "python.+neutron-l3-agent"                            # 10 with DVR
+  ProcessMatch "neutron-ns-metadata-proxy" "python.+neutron-ns-metadata-proxy"          # 10 with DVR
+  ProcessMatch "neutron-metadata-agent" "python.+neutron-metadata-agent"                # 10 with DVR
+
+  # Nova (OpenStack Installed)
+  ProcessMatch "nova-compute" "python.+nova-compute"                                    # 9,10
+
+  # OVS (OpenStack Installed)
+  ProcessMatch "ovs-vswitchd" "ovs-vswitchd.+openvswitch"                               # 9,10
+  ProcessMatch "ovsdb-client" "/bin/ovsdb-client"                                       # 9,10
+  ProcessMatch "ovsdb-server" "ovsdb-server.+openvswitch"                               # 9,10
+  ProcessMatch "ovn-controller" "ovn-controller.+openvswitch"                           # 9,10
+  ProcessMatch "ovn-controller-vtep" "ovn-controller-vtep.+openvswitch"                 # 9,10
+
+  # QEMU (OpenStack Installed)
+  ProcessMatch "qemu-kvm" "/usr/libexec/qemu-kvm"                                       # 9,10
+</Plugin>
+
+<Plugin swap>
+  ReportBytes true
+  ValuesPercentage true
+</Plugin>
+
+# Tail plugin configuration
+<Plugin "tail">
+  <File "/var/log/nova/nova-compute.log">
+    Instance "nova-compute"
+    <Match>
+      Regex " ERROR "
+      DSType "CounterInc"
+      Type "counter"
+      Instance "total"
+    </Match>
+  </File>
+
+  <File "/var/log/neutron/openvswitch-agent.log">
+    Instance "neutron-openvswitch-agent"
+    <Match>
+      Regex " ERROR "
+      DSType "CounterInc"
+      Type "counter"
+      Instance "total"
+    </Match>
+  </File>
+  <File "/var/log/neutron/l3-agent.log">
+    Instance "neutron-l3-agent"
+    <Match>
+      Regex " ERROR "
+      DSType "CounterInc"
+      Type "counter"
+      Instance "total"
+    </Match>
+  </File>
+  <File "/var/log/neutron/metadata-agent.log">
+    Instance "neutron-metadata-agent"
+    <Match>
+      Regex " ERROR "
+      DSType "CounterInc"
+      Type "counter"
+      Instance "total"
+    </Match>
+  </File>
+  <File "/var/log/ceilometer/compute.log">
+    Instance "ceilometer-compute"
+    <Match>
+      Regex " ERROR "
+      DSType "CounterInc"
+      Type "counter"
+      Instance "total"
+    </Match>
+  </File>
+</Plugin>
+
+# Include other collectd configuration files
+Include "/etc/collectd.d"

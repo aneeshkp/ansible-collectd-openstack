@@ -1,0 +1,472 @@
+---
+#
+# Vars to generate Per-Process component of OpenStack Dashboards
+#
+
+per_process_metrics:
+  - name: "Process/Thread Counts"
+    y1units: "short"
+    metrics:
+      - name: "Processes"
+        query: ".ps_count.processes"
+      - name: "Threads"
+        query: ".ps_count.threads"
+    nullPointMode: "connected"
+  - name: "Process CPU"
+    y1units: "percent"
+    metrics:
+      - name: "System"
+        query: ".ps_cputime.syst"
+      - name: "User"
+        query: ".ps_cputime.user"
+    nullPointMode: "connected"
+  - name: "Process Memory"
+    y1units: "bits"
+    metrics:
+      - name: "RSS"
+        query: ".ps_rss"
+      - name: "Virtual"
+        query: ".ps_vm"
+    nullPointMode: "connected"
+  - name: "Process Page Faults"
+    y1units: "short"
+    metrics:
+      - name: "Majflt"
+        query: ".ps_pagefaults.majflt"
+      - name: "Minflt"
+        query: ".ps_pagefaults.minflt"
+    nullPointMode: "connected"
+  - name: "Process IOPs(Estimated via SYSCALLS)"
+    y1units: "iops"
+    metrics:
+      - name: "Read"
+        query: ".ps_disk_ops.read"
+      - name: "Write"
+        query: ".ps_disk_ops.write"
+    nullPointMode: "null"
+  - name: "Process IO Throughput(Estimated via SYSCALLS)"
+    y1units: "bytes"
+    metrics:
+      - name: "Read"
+        query: ".ps_disk_octets.read"
+      - name: "Write"
+        query: ".ps_disk_octets.write"
+    nullPointMode: "null"
+
+per_process_panels:
+
+  #
+  # This dashboard should only contain OpenStack Undercloud Node processes
+  #
+  OpenStack-Undercloud:
+    - name: "Everything Else"
+      processes:
+        - httpd
+        - memcached
+        - mysqld
+        - rabbitmq
+        - docker-registry
+    - name: "Nova"
+      processes:
+        - nova-api
+        - nova-cert
+        - nova-conductor
+        - nova-scheduler
+    - name: "Neutron"
+      processes:
+        - neutron-server
+        - neutron-openvswitch-agent
+        - neutron-ns-metadata-proxy
+        - neutron-metadata-agent
+        - neutron-l3-agent
+        - neutron-dhcp-agent
+    - name: "Open vSwitch"
+      processes:
+        - ovs-vswitchd
+        - ovsdb-client
+        - ovsdb-server
+    - name: "Keystone"
+      processes:
+        - keystone-all
+        - keystone-admin
+        - keystone-main
+        - keystone-token-flush
+    - name: "Heat"
+      processes:
+        - heat-api
+        - heat-api-cfn
+        - heat-api-cloudwatch
+        - heat-engine
+    - name: "Glance"
+      processes:
+        - glance-api
+        - glance-registry
+    - name: "Ceilometer"
+      processes:
+        - ceilometer-api
+        - ceilometer-agent-central
+        - ceilometer-agent-notification
+        - ceilometer-alarm-evaluator
+        - ceilometer-alaram-notifier
+        - ceilometer-collector
+    - name: "Aodh"
+      processes:
+        - aodh-evaluator
+        - aodh-listener
+        - aodh-notifier
+    - name: "Ironic"
+      processes:
+        - ironic-api
+        - ironic-conductor
+        - ironic-inspector
+        - dnsmasq-ironic
+        - dnsmasq-ironicinspector
+    # Openstack's Workflow service, +1 to optimize
+    - name: "Mistral"
+      processes:
+        - mistral-server-api
+        - mistral-server-engine
+        - mistral-server-executor
+    - name: "Zaqar"
+      processes:
+        - zaqar-server
+    - name: "Collectd"
+      processes:
+        - collectd
+
+  #
+  # This dashboard should only contain OpenStack Controller Node processes
+  #
+  OpenStack-Controller:
+    - name: "Everything Else"
+      processes:
+        - dnsmasq
+        - haproxy
+        - httpd
+        - memcached
+        - mongod
+        - mysqld
+        - rabbitmq
+        - redis-server
+    - name: "Nova"
+      processes:
+        - nova-api
+        - nova-cert
+        - nova-conductor
+        - nova-scheduler
+        - nova-consoleauth
+        - nova-novncproxy
+    - name: "Neutron"
+      processes:
+        - neutron-server
+        - neutron-openvswitch-agent
+        - neutron-ns-metadata-proxy
+        - neutron-metadata-agent
+        - neutron-l3-agent
+        - neutron-dhcp-agent
+    - name: "Open vSwitch"
+      processes:
+        - ovs-vswitchd
+        - ovsdb-client
+        - ovsdb-server
+        - ovn-northd
+    - name: "Keystone"
+      processes:
+        - keystone-all
+        - keystone-admin
+        - keystone-main
+        - keystone-token-flush
+    - name: "Cinder"
+      processes:
+        - cinder-api
+        - cinder-scheduler
+        - cinder-volume
+    - name: "Heat"
+      processes:
+        - heat-api
+        - heat-api-cfn
+        - heat-api-cloudwatch
+        - heat-engine
+    - name: "Glance"
+      processes:
+        - glance-api
+        - glance-registry
+    - name: "Swift"
+      processes:
+        - swift-account-auditor
+        - swift-account-reaper
+        - swift-account-replicator
+        - swift-account-server
+        - swift-container-auditor
+        - swift-container-replicator
+        - swift-container-server
+        - swift-container-updater
+        - swift-object-auditor
+        - swift-object-replicator
+        - swift-object-server
+        - swift-object-updater
+        - swift-proxy-server
+    - name: "Ceilometer"
+      processes:
+        - ceilometer-api
+        - ceilometer-agent-central
+        - ceilometer-agent-notification
+        - ceilometer-alarm-evaluator
+        - ceilometer-alaram-notifier
+        - ceilometer-collector
+    - name: "Gnocchi"
+      processes:
+        - gnocchi-metricd
+        - gnocchi-statsd
+    - name: "Aodh"
+      processes:
+        - aodh-evaluator
+        - aodh-listener
+        - aodh-notifier
+    - name: "Sahara"
+      processes:
+        - sahara-api
+        - sahara-engine
+    - name: "Corosync/Pacemaker"
+      processes:
+        - corosync
+        - pacemakerd
+        - cib
+        - stonithd
+        - attrd
+        - pengine
+        - crmd
+        - lrmd
+        - pcsd
+    - name: "Collectd"
+      processes:
+        - collectd
+
+  #
+  # This dashboard should only contain OpenStack Compute Node processes
+  #
+  OpenStack-Compute:
+    - name: "QEMU-KVM"
+      processes:
+        - qemu-kvm
+    - name: "Nova"
+      processes:
+        - nova-compute
+    - name: "Neutron"
+      processes:
+        - neutron-openvswitch-agent
+        - neutron-l3-agent          # DVR enabled case, OSP 10
+        - neutron-ns-metadata-proxy # DVR enabled case, OSP 10
+        - neutron-metadata-agent    # DVR enabled case, OSP 10
+    - name: "Open vSwitch"
+      processes:
+        - ovs-vswitchd
+        - ovsdb-client
+        - ovsdb-server
+        - ovn-controller
+        - ovn-controller-vtep
+    - name: "Ceilometer"
+      processes:
+        - ceilometer-agent-compute
+        - ceilometer-polling
+    - name: "Collectd"
+      processes:
+        - collectd
+
+  #
+  # This dashboard should only contain OpenStack Ceph Node processes
+  #
+  OpenStack-Ceph:
+    - name: "Ceph"
+      processes:
+        - ceph-osd
+        - ceph-mon
+        - salt-minion
+        - diamond
+    - name: "Collectd"
+      processes:
+        - collectd
+
+  #
+  # This dashboard "OpenStack" aims to be comprehensive with all processes across:
+  # Undercloud, Controller, Compute, Ceph, etc... Nodes
+  #
+  OpenStack:
+    - name: "Everything Else"
+      processes:
+        - dnsmasq
+        - haproxy
+        - httpd
+        - memcached
+        - mongod
+        - mysqld
+        - qemu-kvm
+        - rabbitmq
+        - redis-server
+        - tuskar-api
+        - docker-registry
+    - name: "Nova"
+      processes:
+        - nova-api
+        - nova-cert
+        - nova-conductor
+        - nova-scheduler
+        - nova-compute
+        - nova-consoleauth
+        - nova-novncproxy
+    - name: "Neutron"
+      processes:
+        - neutron-server
+        - neutron-openvswitch-agent
+        - neutron-ns-metadata-proxy
+        - neutron-metadata-agent
+        - neutron-l3-agent
+        - neutron-dhcp-agent
+    - name: "Open vSwitch"
+      processes:
+        - ovs-vswitchd
+        - ovsdb-client
+        - ovsdb-server
+        - ovn-northd
+        - ovn-controller
+        - ovn-controller-vtep
+    - name: "Keystone"
+      processes:
+        - keystone-all
+        - keystone-admin
+        - keystone-main
+        - keystone-token-flush
+    - name: "Cinder"
+      processes:
+        - cinder-api
+        - cinder-scheduler
+        - cinder-volume
+    - name: "Heat"
+      processes:
+        - heat-api
+        - heat-api-cfn
+        - heat-api-cloudwatch
+        - heat-engine
+    - name: "Glance"
+      processes:
+        - glance-api
+        - glance-registry
+    - name: "Swift"
+      processes:
+        - swift-account-auditor
+        - swift-account-reaper
+        - swift-account-replicator
+        - swift-account-server
+        - swift-container-auditor
+        - swift-container-replicator
+        - swift-container-server
+        - swift-container-updater
+        - swift-object-auditor
+        - swift-object-replicator
+        - swift-object-server
+        - swift-object-updater
+        - swift-proxy-server
+    - name: "Ceilometer"
+      processes:
+        - ceilometer-api
+        - ceilometer-agent-central
+        - ceilometer-agent-notification
+        - ceilometer-alarm-evaluator
+        - ceilometer-alaram-notifier
+        - ceilometer-collector
+        - ceilometer-agent-compute
+        - ceilometer-polling
+    - name: "Gnocchi"
+      processes:
+        - gnocchi-metricd
+        - gnocchi-statsd
+    - name: "Aodh"
+      processes:
+        - aodh-evaluator
+        - aodh-listener
+        - aodh-notifier
+    - name: "Sahara"
+      processes:
+        - sahara-api
+        - sahara-engine
+    - name: "Ironic"
+      processes:
+        - ironic-api
+        - ironic-conductor
+        - ironic-inspector
+        - dnsmasq-ironic
+        - dnsmasq-ironicinspector
+    - name: "Ceph"
+      processes:
+        - ceph-osd
+        - ceph-mon
+        - salt-minion
+        - diamond
+    - name: "Corosync/Pacemaker"
+      processes:
+        - corosync
+        - pacemakerd
+        - cib
+        - stonithd
+        - attrd
+        - pengine
+        - crmd
+        - lrmd
+        - pcsd
+    # Openstack's Workflow service, +1 to optimize
+    - name: "Mistral"
+      processes:
+        - mistral-server-api
+        - mistral-server-engine
+        - mistral-server-executor
+    - name: "Zaqar"
+      processes:
+        - zaqar-server
+    - name: "Collectd"
+      processes:
+        - collectd
+
+
+  #
+  # This dashboard is geared towards "Generic" Baremetal machines
+  #
+  Baremetal:
+    - name: "httpd"
+      processes:
+        - httpd
+    - name: "Collectd"
+      processes:
+        - collectd
+
+  #
+  # This dashboard is geared towards "Generic" VM Guests
+  #
+  Guest:
+    - name: "httpd"
+      processes:
+        - httpd
+    - name: "Collectd"
+      processes:
+        - collectd
+
+  #
+  # This dashboard is geared towards Carbon/Graphite/Grafana machines
+  #
+  Graphite:
+    - name: "Summerized"
+      processes:
+        - carbon-cache
+        - grafana-server
+        - httpd
+    - name: "Carbon"
+      processes:
+        - carbon-cache
+    - name: "Grafana"
+      processes:
+        - grafana-server
+    - name: "httpd"
+      processes:
+        - httpd
+    - name: "Collectd"
+      processes:
+        - collectd
