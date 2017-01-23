@@ -62,19 +62,6 @@ PreCacheChain "PreCache"
   Target "return"
 </Chain>
 
-# Graphite Host Configuration
-<Plugin write_graphite>
-  <Carbon>
-    Host "{{graphite_host}}"
-    Port "2003"
-    Prefix "{{graphite_prefix}}."
-    Protocol "tcp"
-    LogSendErrors true
-    StoreRates true
-    AlwaysAppendDS false
-    EscapeCharacter "_"
-  </Carbon>
-</Plugin>
 
 <Plugin df>
   ValuesPercentage true

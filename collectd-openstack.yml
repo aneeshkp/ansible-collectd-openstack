@@ -14,6 +14,21 @@
 
 
 
+- hosts: undercloud
+  remote_user: "{{ local_remote_user }}"
+  vars:
+    config_type: undercloud
+  roles:
+    - { role: epel, when: collectd_undercloud }
+    - { role: collectd-openstack, when: collectd_undercloud }
+  tasks:
+    - name: Collectd off if not collectd_undercloud
+      service: name=collectd state=stopped enabled=false
+      become: true
+      when: not collectd_undercloud
+      ignore_errors: true
+  tags: undercloud
+
 
 - hosts: controller
   remote_user: "{{ host_remote_user }}"

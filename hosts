@@ -1,5 +1,11 @@
 [controller]
+172.16.0.35
+172.16.0.34
+172.16.0.24
 
 [compute]
+172.16.0.21
+172.16.0.31
 
 [undercloud]
+undercloud

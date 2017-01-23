@@ -2,7 +2,9 @@
 
 # OpenStack Installer
 tripleo: true
-home_dir: `/
+
+# Home directory on undercloud
+home_dir: /home/stack
 
 # Login user for the remote hosts
 host_remote_user: heat-admin
@@ -26,35 +28,10 @@ collectd_interval: 10
 # Run collectd on specific openstack nodes:
 collectd_undercloud: true
 collectd_controller: true
-collectd_ceph: true
-collectd_compute: false
+collectd_ceph: false
+collectd_compute: true
 
 
 
-########################################
-# Graphite Configuration
-########################################
-# Graphite Server ip address (Collectd -> Graphite server)
-# you must fill out graphite_host prior to playbook execution
-graphite_host:
-graphite_port: 80
-# Graphite prefix / Cloud name used both with graphite and grafana dashboards
-graphite_prefix: openstack
-# Graphite username and password for login on the dashboard
-graphite_username: root
-graphite_password: calvin
 
-########################################
-# Grafana Dashboarding Configuration
-########################################
-# Grafana Server IP Address/Port (Can be hosted on the Graphite server)
-# you must fill out grafana_host prior to playbook execution
-grafana_host:
-grafana_port: 3000
-grafana_username: admin
-grafana_password: admin
-# Batch number of hosts per row for all-{cpu, memory, disk, network} openstack dashboards
-dashboards_batch: 20
-# For use with all-{cpu, memory, disk, network} openstack dashboards, uses the graphite prefix to create dashboards for specific openstack cloud
-dashboard_cloud_name: "{{graphite_prefix}}"
 
